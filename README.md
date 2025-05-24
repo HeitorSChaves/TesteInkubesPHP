@@ -43,7 +43,3 @@ Basta rodar o script `database.sql` incluso no projeto. Ele cria as tabelas `use
 - Todas as operações usam prepared statements (PDO) para evitar SQL Injection.
 - Todos os dados exibidos são escapados com `htmlspecialchars` para evitar XSS.
 - Há validação de dados no backend e frontend.
-
----
-
-Dúvidas? Abra uma issue ou entre em contato.
