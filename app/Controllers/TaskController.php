@@ -15,7 +15,12 @@ class TaskController extends Controller
 
     public function index()
     {
-        $tasks = $this->taskModel->all();
+        $user_id = $_SESSION['user_id'] ?? null;
+        if (!$user_id) {
+            header('Location: ' . BASE_URL . '/login');
+            exit;
+        }
+        $tasks = $this->taskModel->all($user_id);
         $this->view('tasks/index', ['tasks' => $tasks]);
     }
 
@@ -26,8 +31,15 @@ class TaskController extends Controller
 
     public function store()
     {
-        $this->taskModel->create($_POST);
-        header('Location: /tasks');
+        $user_id = $_SESSION['user_id'] ?? null;
+        if (!$user_id) {
+            header('Location: ' . BASE_URL . '/login');
+            exit;
+        }
+        $title = $_POST['title'] ?? '';
+        $description = $_POST['description'] ?? '';
+        $this->taskModel->create($title, $description, $user_id);
+        header('Location: ' . BASE_URL . '/tasks');
     }
 
     public function edit($id)
@@ -38,8 +50,11 @@ class TaskController extends Controller
 
     public function update($id)
     {
-        $this->taskModel->update($id, $_POST);
-        header('Location: /tasks');
+        $title = $_POST['title'] ?? '';
+        $description = $_POST['description'] ?? '';
+        $completed = isset($_POST['completed']) ? 1 : 0;
+        $this->taskModel->update($id, $title, $description, $completed);
+        header('Location: ' . BASE_URL . '/tasks');
     }
 
     public function delete($id)

@@ -8,9 +8,13 @@
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
     <div class="container">
-        <a class="navbar-brand" href="/testePhP/public/tasks">Tarefas</a>
+        <a class="navbar-brand" href="<?= BASE_URL ?>/tasks">Tarefas</a>
         <div>
-            <a class="btn btn-outline-light" href="/testePhP/public/logout">Logout</a>
+            <?php if(isset($_SESSION['user_id'])): ?>
+                <a class="btn btn-outline-light" href="<?= BASE_URL ?>/logout">Logout</a>
+            <?php else: ?>
+                <a class="btn btn-outline-light" href="<?= BASE_URL ?>/login">Login</a>
+            <?php endif; ?>
         </div>
     </div>
 </nav>

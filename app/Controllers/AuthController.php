@@ -18,15 +18,17 @@ class AuthController extends Controller {
     public function doLogin() {
         $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
         $password = $_POST['password'];
-
+        $response = ['success' => false];
         $user = $this->userModel->verify($email, $password);
         if ($user) {
             $_SESSION['user_id'] = $user['id'];
-            header('Location: ' . BASE_URL . '/tasks');
+            $response['success'] = true;
         } else {
-            $_SESSION['error'] = 'Credenciais inválidas';
-            header('Location: ' . BASE_URL . '/login');
+            $response['error'] = 'Credenciais inválidas';
         }
+        header('Content-Type: application/json');
+        echo json_encode($response);
+        exit;
     }
 
     public function register() {
@@ -37,13 +39,17 @@ class AuthController extends Controller {
         $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
         $password = $_POST['password'];
 
-        if ($this->userModel->create($email, $password)) {
-            $_SESSION['success'] = 'Registrado com sucesso! Faça login.';
-            header('Location: ' . BASE_URL . '/login');
+        $response = ['success' => false];
+        if ($this->userModel->findByEmail($email)) {
+            $response['error'] = 'E-mail já cadastrado.';
+        } elseif ($this->userModel->create($email, $password)) {
+            $response['success'] = true;
         } else {
-            $_SESSION['error'] = 'Erro ao registrar';
-            header('Location: ' . BASE_URL . '/register');
+            $response['error'] = 'Erro ao registrar.';
         }
+        header('Content-Type: application/json');
+        echo json_encode($response);
+        exit;
     }
 
     public function logout() {

@@ -7,7 +7,7 @@ class User {
     private $db;
 
     public function __construct() {
-        $this->db = Database::getInstance()->getConnection();
+        $this->db = (new Database())->getConnection();
     }
 
     public function findByEmail($email) {
