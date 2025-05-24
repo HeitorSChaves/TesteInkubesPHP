@@ -16,14 +16,29 @@ class User {
         return $stmt->fetch();
     }
 
-    public function create($email, $password) {
+    public function create($name, $email, $password) {
         $hash = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $this->db->prepare("INSERT INTO users (email, password) VALUES (?, ?)");
-        return $stmt->execute([$email, $hash]);
+        // Gera username: primeiro e último nome, minúsculo, separados por ponto, sem acentos, + 4 dígitos aleatórios
+        $parts = preg_split('/\s+/', trim($name));
+        $primeiro = isset($parts[0]) ? $parts[0] : '';
+        $ultimo = isset($parts[count($parts)-1]) ? $parts[count($parts)-1] : '';
+        $base = strtolower(preg_replace('/[^a-z0-9]+/', '', iconv('UTF-8', 'ASCII//TRANSLIT', $primeiro))) . '.' . strtolower(preg_replace('/[^a-z0-9]+/', '', iconv('UTF-8', 'ASCII//TRANSLIT', $ultimo)));
+        $username = $base . rand(1000, 9999);
+        $stmt = $this->db->prepare("INSERT INTO users (name, email, password, username) VALUES (?, ?, ?, ?)");
+        if ($stmt->execute([$name, $email, $hash, $username])) {
+            return $username;
+        }
+        return false;
     }
 
-    public function verify($email, $password) {
-        $user = $this->findByEmail($email);
+    public function findByUsernameOrEmail($userOrEmail) {
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE email = ? OR username = ?");
+        $stmt->execute([$userOrEmail, $userOrEmail]);
+        return $stmt->fetch();
+    }
+
+    public function verify($userOrEmail, $password) {
+        $user = $this->findByUsernameOrEmail($userOrEmail);
         if ($user && password_verify($password, $user['password'])) {
             return $user;
         }

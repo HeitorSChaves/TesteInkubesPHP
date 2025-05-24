@@ -32,7 +32,7 @@ class Task extends Model
 
     public function update($id, $title, $description, $completed)
     {
-        $stmt = $this->db->prepare("UPDATE tasks SET title = :title, description = :description, completed = :completed WHERE id = :id");
+        $stmt = $this->db->prepare("UPDATE tasks SET title = :title, description = :description, is_completed = :completed WHERE id = :id");
         return $stmt->execute([
             'title' => htmlspecialchars($title, ENT_QUOTES),
             'description' => htmlspecialchars($description, ENT_QUOTES),

@@ -12,7 +12,7 @@
         <textarea name="description" class="form-control" required><?= htmlspecialchars($task['description']) ?></textarea>
     </div>
     <div class="form-check mb-3">
-        <input type="checkbox" name="completed" class="form-check-input" <?= $task['completed'] ? 'checked' : '' ?>>
+        <input type="checkbox" name="completed" class="form-check-input" <?= (isset($task['is_completed']) ? $task['is_completed'] : (isset($task['completed']) ? $task['completed'] : 0)) ? 'checked' : '' ?>>
         <label class="form-check-label">Concluída</label>
     </div>
     <button class="btn btn-primary">Atualizar</button>

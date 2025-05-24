@@ -16,10 +16,10 @@ class AuthController extends Controller {
     }
 
     public function doLogin() {
-        $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+        $userOrEmail = trim($_POST['email'] ?? '');
         $password = $_POST['password'];
         $response = ['success' => false];
-        $user = $this->userModel->verify($email, $password);
+        $user = $this->userModel->verify($userOrEmail, $password);
         if ($user) {
             $_SESSION['user_id'] = $user['id'];
             $response['success'] = true;
@@ -36,16 +36,22 @@ class AuthController extends Controller {
     }
 
     public function doRegister() {
+        $name = trim($_POST['name'] ?? '');
         $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
         $password = $_POST['password'];
-
         $response = ['success' => false];
         if ($this->userModel->findByEmail($email)) {
             $response['error'] = 'E-mail já cadastrado.';
-        } elseif ($this->userModel->create($email, $password)) {
-            $response['success'] = true;
+        } elseif (empty($name) || empty($email) || empty($password)) {
+            $response['error'] = 'Preencha todos os campos.';
         } else {
-            $response['error'] = 'Erro ao registrar.';
+            $username = $this->userModel->create($name, $email, $password);
+            if ($username) {
+                $response['success'] = true;
+                $response['username'] = $username;
+            } else {
+                $response['error'] = 'Erro ao registrar.';
+            }
         }
         header('Content-Type: application/json');
         echo json_encode($response);

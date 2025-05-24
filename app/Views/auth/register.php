@@ -2,8 +2,8 @@
 
 <div class="container">
     <h2>Cadastro</h2>
-    <div id="register-alert"></div>
     <form id="register-form">
+        <input type="text" name="name" required class="form-control mb-2" placeholder="Nome completo">
         <input type="email" name="email" required class="form-control mb-2" placeholder="Email">
         <input type="password" name="password" required class="form-control mb-2" placeholder="Senha">
         <button type="submit" class="btn btn-primary">Cadastrar</button>
@@ -12,6 +12,8 @@
 </div>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bootstrap-4/bootstrap-4.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 $(function() {
     $('#register-form').on('submit', function(e) {
@@ -23,14 +25,20 @@ $(function() {
             dataType: 'json',
             success: function(resp) {
                 if(resp.success) {
-                    $('#register-alert').html('<div class="alert alert-success">Cadastro realizado com sucesso! Redirecionando...</div>');
-                    setTimeout(function(){ window.location.href = '<?= BASE_URL ?>/login'; }, 1500);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Cadastro realizado!',
+                        html: 'Seu usuário de acesso é:<br><b>' + resp.username + '</b><br>Redirecionando para o login...',
+                        timer: 3500,
+                        showConfirmButton: false
+                    }).then(() => window.location.href = '<?= BASE_URL ?>/login');
+                    setTimeout(function(){ window.location.href = '<?= BASE_URL ?>/login'; }, 3600);
                 } else {
-                    $('#register-alert').html('<div class="alert alert-danger">' + resp.error + '</div>');
+                    Swal.fire('Erro', resp.error, 'error');
                 }
             },
             error: function(xhr) {
-                $('#register-alert').html('<div class="alert alert-danger">Erro ao cadastrar. Tente novamente.</div>');
+                Swal.fire('Erro', 'Erro ao cadastrar. Tente novamente.', 'error');
             }
         });
     });
