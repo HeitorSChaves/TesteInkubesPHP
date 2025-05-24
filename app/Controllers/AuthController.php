@@ -19,12 +19,16 @@ class AuthController extends Controller {
         $userOrEmail = trim($_POST['email'] ?? '');
         $password = $_POST['password'];
         $response = ['success' => false];
-        $user = $this->userModel->verify($userOrEmail, $password);
-        if ($user) {
-            $_SESSION['user_id'] = $user['id'];
-            $response['success'] = true;
+        if (empty($userOrEmail) || empty($password)) {
+            $response['error'] = 'Preencha todos os campos.';
         } else {
-            $response['error'] = 'Credenciais inválidas';
+            $user = $this->userModel->verify($userOrEmail, $password);
+            if ($user) {
+                $_SESSION['user_id'] = $user['id'];
+                $response['success'] = true;
+            } else {
+                $response['error'] = 'Credenciais inválidas';
+            }
         }
         header('Content-Type: application/json');
         echo json_encode($response);
@@ -37,10 +41,14 @@ class AuthController extends Controller {
 
     public function doRegister() {
         $name = trim($_POST['name'] ?? '');
-        $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+        $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
         $password = $_POST['password'];
         $response = ['success' => false];
-        if ($this->userModel->findByEmail($email)) {
+        if (!$email) {
+            $response['error'] = 'E-mail inválido.';
+        } elseif (strlen($password) < 6) {
+            $response['error'] = 'A senha deve ter pelo menos 6 caracteres.';
+        } elseif ($this->userModel->findByEmail($email)) {
             $response['error'] = 'E-mail já cadastrado.';
         } elseif (empty($name) || empty($email) || empty($password)) {
             $response['error'] = 'Preencha todos os campos.';

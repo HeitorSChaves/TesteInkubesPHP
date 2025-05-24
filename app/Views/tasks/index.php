@@ -47,18 +47,6 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bootstrap-4/bootstrap-4.min.css">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-function showUsernameModal(username) {
-    if (window.sessionStorage && !sessionStorage.getItem('username_shown')) {
-        Swal.fire({
-            icon: 'info',
-            title: 'Bem-vindo!',
-            html: 'Seu usuário de acesso é:<br><b>' + username + '</b>',
-            confirmButtonText: 'OK'
-        });
-        sessionStorage.setItem('username_shown', '1');
-    }
-}
-
 $(function() {
     // Criar tarefa
     $('#btn-create-task').on('click', function(e) {
@@ -103,7 +91,6 @@ $(function() {
         }
     });
 
-    // Exibe modal de username se disponível
     <?php if(isset($_SESSION['user_id'])): ?>
     <?php
         $db = (new \App\Core\Database())->getConnection();
@@ -112,7 +99,17 @@ $(function() {
         $user = $stmt->fetch();
         $username = $user ? $user['username'] : '';
     ?>
-    showUsernameModal('<?= htmlspecialchars($username) ?>');
+    $(document).ready(function() {
+        if (window.sessionStorage && !sessionStorage.getItem('username_shown')) {
+            Swal.fire({
+                icon: 'info',
+                title: 'Bem-vindo!',
+                html: 'Seu usuário de acesso é:<br><b><?= htmlspecialchars($username) ?></b>',
+                confirmButtonText: 'OK'
+            });
+            sessionStorage.setItem('username_shown', '1');
+        }
+    });
     <?php endif; ?>
 });
 </script>

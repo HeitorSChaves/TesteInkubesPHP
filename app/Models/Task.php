@@ -24,8 +24,8 @@ class Task extends Model
     {
         $stmt = $this->db->prepare("INSERT INTO tasks (title, description, user_id, created_at) VALUES (:title, :description, :user_id, NOW())");
         return $stmt->execute([
-            'title' => htmlspecialchars($title, ENT_QUOTES),
-            'description' => htmlspecialchars($description, ENT_QUOTES),
+            'title' => htmlspecialchars($title, ENT_QUOTES, 'UTF-8'),
+            'description' => htmlspecialchars($description, ENT_QUOTES, 'UTF-8'),
             'user_id' => $user_id
         ]);
     }
@@ -34,8 +34,8 @@ class Task extends Model
     {
         $stmt = $this->db->prepare("UPDATE tasks SET title = :title, description = :description, is_completed = :completed WHERE id = :id");
         return $stmt->execute([
-            'title' => htmlspecialchars($title, ENT_QUOTES),
-            'description' => htmlspecialchars($description, ENT_QUOTES),
+            'title' => htmlspecialchars($title, ENT_QUOTES, 'UTF-8'),
+            'description' => htmlspecialchars($description, ENT_QUOTES, 'UTF-8'),
             'completed' => $completed,
             'id' => $id
         ]);

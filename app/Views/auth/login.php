@@ -1,9 +1,9 @@
 <?php include __DIR__ . '/../partials/header.php'; ?>
 <div class="container">
     <h2>Login</h2>
-    <form id="login-form">
-        <input type="text" name="email" required class="form-control mb-2" placeholder="E-mail ou usuário">
-        <input type="password" name="password" required class="form-control mb-2" placeholder="Senha">
+    <form id="login-form" autocomplete="off">
+        <input type="text" name="email" required class="form-control mb-2" placeholder="E-mail ou usuário" maxlength="100" pattern="^[A-Za-z0-9@._-]+$" title="Apenas letras, números e . _ - @">
+        <input type="password" name="password" required class="form-control mb-2" placeholder="Senha" minlength="6" maxlength="50" autocomplete="current-password">
         <button type="submit" class="btn btn-primary">Entrar</button>
     </form>
     <p class="mt-3">Não tem conta? <a href="<?= BASE_URL ?>/register">Cadastre-se</a></p>
@@ -15,6 +15,18 @@
 $(function() {
     $('#login-form').on('submit', function(e) {
         e.preventDefault();
+        // Validação extra JS
+        var userOrEmail = $('input[name=email]').val().trim();
+        var password = $('input[name=password]').val();
+        var userRegex = /^[A-Za-z0-9@._-]+$/;
+        if (!userRegex.test(userOrEmail)) {
+            Swal.fire('Erro', 'Usuário ou e-mail inválido.', 'error');
+            return;
+        }
+        if (password.length < 6) {
+            Swal.fire('Erro', 'A senha deve ter pelo menos 6 caracteres.', 'error');
+            return;
+        }
         $.ajax({
             url: '<?= BASE_URL ?>/login',
             type: 'POST',

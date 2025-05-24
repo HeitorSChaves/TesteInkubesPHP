@@ -2,10 +2,10 @@
 
 <div class="container">
     <h2>Cadastro</h2>
-    <form id="register-form">
-        <input type="text" name="name" required class="form-control mb-2" placeholder="Nome completo">
-        <input type="email" name="email" required class="form-control mb-2" placeholder="Email">
-        <input type="password" name="password" required class="form-control mb-2" placeholder="Senha">
+    <form id="register-form" autocomplete="off">
+        <input type="text" name="name" required class="form-control mb-2" placeholder="Nome completo" maxlength="100" pattern="^[A-Za-zÀ-ÿ ']+$" title="Apenas letras e espaços" oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ ']/g, '')">
+        <input type="email" name="email" required class="form-control mb-2" placeholder="Email" maxlength="100">
+        <input type="password" name="password" required class="form-control mb-2" placeholder="Senha" minlength="6" maxlength="50" autocomplete="new-password">
         <button type="submit" class="btn btn-primary">Cadastrar</button>
     </form>
     <p class="mt-3">Já tem conta? <a href="<?= BASE_URL ?>/login">Faça login</a></p>
@@ -18,6 +18,24 @@
 $(function() {
     $('#register-form').on('submit', function(e) {
         e.preventDefault();
+        // Validação extra JS
+        var name = $('input[name=name]').val().trim();
+        var email = $('input[name=email]').val().trim();
+        var password = $('input[name=password]').val();
+        var nameRegex = /^[A-Za-zÀ-ÿ ']+$/;
+        var emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+        if (!nameRegex.test(name)) {
+            Swal.fire('Erro', 'Nome inválido. Use apenas letras e espaços.', 'error');
+            return;
+        }
+        if (!emailRegex.test(email)) {
+            Swal.fire('Erro', 'E-mail inválido.', 'error');
+            return;
+        }
+        if (password.length < 6) {
+            Swal.fire('Erro', 'A senha deve ter pelo menos 6 caracteres.', 'error');
+            return;
+        }
         $.ajax({
             url: '<?= BASE_URL ?>/register',
             type: 'POST',
