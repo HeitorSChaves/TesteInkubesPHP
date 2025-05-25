@@ -26,6 +26,10 @@ class TaskController extends Controller
 
     public function create()
     {
+        if (!isset($_SESSION['user_id'])) {
+            $this->showPermissionError();
+            return;
+        }
         $this->view('tasks/create');
     }
 
@@ -51,12 +55,29 @@ class TaskController extends Controller
 
     public function edit($id)
     {
+        if (!isset($_SESSION['user_id'])) {
+            $this->showPermissionError();
+            return;
+        }
         $task = $this->taskModel->find($id);
+        if (!$task || $task['user_id'] != $_SESSION['user_id']) {
+            $this->showPermissionError();
+            return;
+        }
         $this->view('tasks/edit', ['task' => $task]);
     }
 
     public function update($id)
     {
+        if (!isset($_SESSION['user_id'])) {
+            $this->showPermissionError();
+            return;
+        }
+        $task = $this->taskModel->find($id);
+        if (!$task || $task['user_id'] != $_SESSION['user_id']) {
+            $this->showPermissionError();
+            return;
+        }
         $response = ['success' => false];
         $title = $_POST['title'] ?? '';
         $description = $_POST['description'] ?? '';
@@ -81,6 +102,15 @@ class TaskController extends Controller
         }
         header('Content-Type: application/json');
         echo json_encode($response);
+        exit;
+    }
+
+    private function showPermissionError()
+    {
+        echo '<div style="max-width:500px;margin:60px auto;text-align:center;">
+        <div class="alert alert-danger">Você não tem permissão para acessar essa tela.</div>
+        <a href="'.BASE_URL.'/login" class="btn btn-primary">Voltar para o Login</a>
+        </div>';
         exit;
     }
 }

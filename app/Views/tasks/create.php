@@ -17,10 +17,13 @@
     </div>
 </div>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 $(function() {
     $('#create-task-form').on('submit', function(e) {
         e.preventDefault();
+        var btn = $(this).find('button[type=submit]');
+        btn.prop('disabled', true);
         $.ajax({
             url: '<?= BASE_URL ?>/tasks/store',
             type: 'POST',
@@ -28,14 +31,22 @@ $(function() {
             dataType: 'json',
             success: function(resp) {
                 if(resp.success) {
-                    $('#create-task-alert').html('<div class="alert alert-success">Tarefa criada!</div>');
-                    setTimeout(function(){ window.location.href = '<?= BASE_URL ?>/tasks'; }, 1000);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Sucesso',
+                        text: 'Tarefa criada com sucesso!',
+                        timer: 1200,
+                        showConfirmButton: false
+                    }).then(() => window.location.href = '<?= BASE_URL ?>/tasks');
+                    setTimeout(function(){ window.location.href = '<?= BASE_URL ?>/tasks'; }, 1300);
                 } else {
-                    $('#create-task-alert').html('<div class="alert alert-danger">' + resp.error + '</div>');
+                    Swal.fire('Erro', resp.error, 'error');
+                    btn.prop('disabled', false);
                 }
             },
             error: function(xhr) {
-                $('#create-task-alert').html('<div class="alert alert-danger">Erro ao criar tarefa.</div>');
+                Swal.fire('Erro', 'Erro ao criar tarefa.', 'error');
+                btn.prop('disabled', false);
             }
         });
     });

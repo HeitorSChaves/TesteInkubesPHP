@@ -68,47 +68,49 @@ $(function() {
     // Excluir tarefa
     $('.btn-delete-task').on('click', function(e) {
         e.preventDefault();
-        if(confirm('Tem certeza?')) {
-            var id = $(this).closest('tr').data('id');
-            $.ajax({
-                url: '<?= BASE_URL ?>/tasks/delete/' + id,
-                type: 'POST',
-                dataType: 'json',
-                success: function(resp) {
-                    if(resp.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Sucesso',
-                            text: 'Tarefa excluída com sucesso!',
-                            timer: 1200,
-                            showConfirmButton: false
-                        }).then(() => location.reload());
-                        setTimeout(function(){ location.reload(); }, 1300);
-                    } else {
-                        Swal.fire('Erro', resp.error, 'error');
+        var id = $(this).closest('tr').data('id');
+        Swal.fire({
+            title: 'Tem certeza?',
+            text: 'Você não poderá reverter isso!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sim, deletar!',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '<?= BASE_URL ?>/tasks/delete/' + id,
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function(resp) {
+                        if(resp.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Sucesso',
+                                text: 'Tarefa excluída com sucesso!',
+                                timer: 1200,
+                                showConfirmButton: false
+                            }).then(() => location.reload());
+                            setTimeout(function(){ location.reload(); }, 1300);
+                        } else {
+                            Swal.fire('Erro', resp.error, 'error');
+                        }
+                    },
+                    error: function() {
+                        Swal.fire('Erro', 'Erro ao excluir tarefa.', 'error');
                     }
-                },
-                error: function() {
-                    Swal.fire('Erro', 'Erro ao excluir tarefa.', 'error');
-                }
-            });
-        }
+                });
+            }
+        });
     });
 
     <?php if(isset($_SESSION['user_id'])): ?>
-    <?php
-        $db = (new \App\Core\Database())->getConnection();
-        $stmt = $db->prepare('SELECT username FROM users WHERE id = ?');
-        $stmt->execute([$_SESSION['user_id']]);
-        $user = $stmt->fetch();
-        $username = $user ? $user['username'] : '';
-    ?>
     $(document).ready(function() {
         if (window.sessionStorage && !sessionStorage.getItem('username_shown')) {
             Swal.fire({
                 icon: 'info',
                 title: 'Bem-vindo!',
-                html: 'Seu usuário de acesso é:<br><b><?= htmlspecialchars($username) ?></b>',
+                html: 'Seu usuário de acesso é:<br><b><?= htmlspecialchars($_SESSION['username'] ?? '') ?></b>',
                 confirmButtonText: 'OK'
             });
             sessionStorage.setItem('username_shown', '1');

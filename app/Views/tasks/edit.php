@@ -21,10 +21,13 @@
     </div>
 </div>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 $(function() {
     $('#edit-task-form').on('submit', function(e) {
         e.preventDefault();
+        var btn = $(this).find('button[type=submit]');
+        btn.prop('disabled', true);
         $.ajax({
             url: '<?= BASE_URL ?>/tasks/update/<?= $task['id'] ?>',
             type: 'POST',
@@ -32,14 +35,22 @@ $(function() {
             dataType: 'json',
             success: function(resp) {
                 if(resp.success) {
-                    $('#edit-task-alert').html('<div class="alert alert-success">Tarefa atualizada!</div>');
-                    setTimeout(function(){ window.location.href = '<?= BASE_URL ?>/tasks'; }, 1000);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Sucesso',
+                        text: 'Tarefa atualizada com sucesso!',
+                        timer: 1200,
+                        showConfirmButton: false
+                    }).then(() => window.location.href = '<?= BASE_URL ?>/tasks');
+                    setTimeout(function(){ window.location.href = '<?= BASE_URL ?>/tasks'; }, 1300);
                 } else {
-                    $('#edit-task-alert').html('<div class="alert alert-danger">' + resp.error + '</div>');
+                    Swal.fire('Erro', resp.error, 'error');
+                    btn.prop('disabled', false);
                 }
             },
             error: function(xhr) {
-                $('#edit-task-alert').html('<div class="alert alert-danger">Erro ao atualizar tarefa.</div>');
+                Swal.fire('Erro', 'Erro ao atualizar tarefa.', 'error');
+                btn.prop('disabled', false);
             }
         });
     });

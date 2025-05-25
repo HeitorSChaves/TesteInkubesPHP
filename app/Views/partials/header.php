@@ -29,37 +29,59 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
     <div class="container-fluid">
         <a class="navbar-brand" href="<?= BASE_URL ?>/tasks">Tarefas</a>
-        <div>
-            <?php if(isset($_SESSION['user_id'])): ?>
-                <?php
-                    $username = '';
-                    $name = '';
-                    $greeting = '';
-                    if(isset($_SESSION['user_id'])) {
-                        $db = (new \App\Core\Database())->getConnection();
-                        $stmt = $db->prepare('SELECT username, name FROM users WHERE id = ?');
-                        $stmt->execute([$_SESSION['user_id']]);
-                        $user = $stmt->fetch();
-                        if($user) {
-                            $username = $user['username'];
-                            $name = $user['name'];
-                        }
-                        $hour = (int)date('H');
-                        if ($hour >= 5 && $hour < 12) {
-                            $greeting = 'Bom dia';
-                        } elseif ($hour >= 12 && $hour < 18) {
-                            $greeting = 'Boa tarde';
-                        } else {
-                            $greeting = 'Boa noite';
-                        }
-                    }
-                ?>
-                <span class="text-light me-3 d-none d-md-inline">Olá, <?= htmlspecialchars($name) ?>, <?= $greeting ?>! <small>(usuário: <b><?= htmlspecialchars($username) ?></b>)</small></span>
-                <a class="btn btn-outline-light" href="<?= BASE_URL ?>/logout">Logout</a>
-            <?php else: ?>
-                <a class="btn btn-outline-light" href="<?= BASE_URL ?>/login">Login</a>
-            <?php endif; ?>
+        <?php if(isset($_SESSION['user_id'])): ?>
+        <div class="d-flex align-items-center ms-auto flex-wrap flex-row gap-2">
+            <?php
+            require_once __DIR__ . '/../../Core/UserGreeting.php';
+            $greetingObj = new \App\Core\UserGreeting($_SESSION);
+            ?>
+            <span class="text-light d-flex align-items-center flex-wrap" style="gap:0.5rem;">
+                Olá, <b><?= $greetingObj->getFirstName() ?></b>, <?= $greetingObj->getGreeting() ?>!
+                <span id="navbar-clock" class="text-light fw-bold" style="font-family:monospace;"></span>
+                <small class="ms-1">(usuário: <b><?= $greetingObj->getUsername() ?></b>)</small>
+            </span>
+            <a class="btn btn-outline-light ms-2" href="<?= BASE_URL ?>/logout">Logout</a>
         </div>
+        <?php endif; ?>
     </div>
 </nav>
+<?php if(isset($_SESSION['user_id'])): ?>
+<script>
+function updateNavbarClock() {
+    fetch('<?= BASE_URL ?>/clock.php')
+        .then(resp => resp.text())
+        .then(time => {
+            document.getElementById('navbar-clock').textContent = time;
+        });
+}
+setInterval(updateNavbarClock, 1000);
+updateNavbarClock();
+</script>
+<style>
+@media (max-width: 991px) {
+    .navbar .d-flex.align-items-center {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 0.3rem !important;
+    }
+    .navbar .d-flex.align-items-center span {
+        font-size: 1rem;
+        flex-wrap: wrap;
+    }
+    .navbar .btn {
+        width: 100%;
+        margin-left: 0 !important;
+    }
+}
+@media (max-width: 600px) {
+    .navbar .d-flex.align-items-center span {
+        font-size: 0.95rem;
+    }
+    .navbar .btn {
+        font-size: 0.95rem;
+        padding: 0.4rem 0.7rem;
+    }
+}
+</style>
+<?php endif; ?>
 <div class="container my-4">
