@@ -1,14 +1,18 @@
 <?php include __DIR__ . '/../partials/header.php'; ?>
 
 <div class="container">
-    <h2>Cadastro</h2>
-    <form id="register-form" autocomplete="off">
-        <input type="text" name="name" required class="form-control mb-2" placeholder="Nome completo" maxlength="100" pattern="^[A-Za-zÀ-ÿ ']+$" title="Apenas letras e espaços" oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ ']/g, '')">
-        <input type="email" name="email" required class="form-control mb-2" placeholder="Email" maxlength="100">
-        <input type="password" name="password" required class="form-control mb-2" placeholder="Senha" minlength="6" maxlength="50" autocomplete="new-password">
-        <button type="submit" class="btn btn-primary">Cadastrar</button>
-    </form>
-    <p class="mt-3">Já tem conta? <a href="<?= BASE_URL ?>/login">Faça login</a></p>
+    <h2 class="mb-4 text-center">Cadastro</h2>
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-7 col-lg-6">
+            <form id="register-form" autocomplete="off" class="card p-4 shadow-sm border-0 bg-white">
+                <input type="text" name="name" required class="form-control mb-3" placeholder="Nome completo" maxlength="100" pattern="^[A-Za-zÀ-ÿ ']+$" title="Apenas letras e espaços" oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ ']/g, '')">
+                <input type="email" name="email" required class="form-control mb-3" placeholder="Email" maxlength="100">
+                <input type="password" name="password" required class="form-control mb-3" placeholder="Senha" minlength="6" maxlength="50" autocomplete="new-password">
+                <button type="submit" class="btn btn-success w-100">Cadastrar</button>
+            </form>
+            <p class="mt-3 text-center">Já tem conta? <a href="<?= BASE_URL ?>/login">Faça login</a></p>
+        </div>
+    </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>

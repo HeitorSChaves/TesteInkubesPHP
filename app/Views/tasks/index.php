@@ -1,16 +1,18 @@
 <?php require __DIR__ . '/../partials/header.php'; ?>
 
-<h1 class="mb-4">Minhas Tarefas</h1>
+<h1 class="mb-4 text-center">Minhas Tarefas</h1>
 <div id="tasks-alert"></div>
-<a class="btn btn-primary mb-3" href="#" id="btn-create-task">Criar Nova Tarefa</a>
-<div id="tasks-list">
-    <table class="table table-striped">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+    <a class="btn btn-primary mb-2" href="#" id="btn-create-task"><i class="bi bi-plus-circle"></i> Criar Nova Tarefa</a>
+</div>
+<div id="tasks-list" class="table-responsive">
+    <table class="table table-striped align-middle">
         <thead>
             <tr>
                 <th>Título</th>
                 <th>Descrição</th>
                 <th>Status</th>
-                <th>Ações</th>
+                <th class="text-center">Ações</th>
             </tr>
         </thead>
         <tbody>
@@ -23,19 +25,21 @@
                         $status = 'Pendente';
                         if (isset($task['is_completed'])) {
                             if ($task['is_completed'] == 1) {
-                                $status = 'Concluída';
+                                $status = '<span class="badge bg-success">Concluída</span>';
                             } elseif ($task['is_completed'] == 2) {
-                                $status = 'Em andamento';
+                                $status = '<span class="badge bg-warning text-dark">Em andamento</span>';
                             } elseif ($task['is_completed'] == 3) {
-                                $status = 'Aguardando revisão';
+                                $status = '<span class="badge bg-info text-dark">Aguardando revisão</span>';
+                            } else {
+                                $status = '<span class="badge bg-secondary">Pendente</span>';
                             }
                         }
                         echo $status;
                     ?>
                     </td>
-                    <td>
-                        <a href="#" class="btn btn-sm btn-warning btn-edit-task">Editar</a>
-                        <a href="#" class="btn btn-sm btn-danger btn-delete-task">Excluir</a>
+                    <td class="text-center">
+                        <a href="#" class="btn btn-sm btn-warning btn-edit-task me-1"><i class="bi bi-pencil"></i> Editar</a>
+                        <a href="#" class="btn btn-sm btn-danger btn-delete-task"><i class="bi bi-trash"></i> Excluir</a>
                     </td>
                 </tr>
             <?php endforeach; ?>
