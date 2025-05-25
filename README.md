@@ -32,7 +32,7 @@
 4. Inicie o Apache/MySQL pelo XAMPP ou similar.
 5. Acesse no navegador:
    ```
-   http://localhost/testePhP/TesteInkubesPHP/public
+   http://localhost/TesteInkubesPHP/public
    ```
 
 ## Como criar as tabelas necessárias
