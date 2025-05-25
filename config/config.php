@@ -7,7 +7,7 @@ define('DB_NAME', 'teste-php');
 define('DB_USER', 'root');
 define('DB_PASS', '');
 
-define('BASE_URL', '/testePhP/TesteInkubesPHP/public');
+define('BASE_URL', '/TesteInkubesPHP/public');
 
 spl_autoload_register(function ($class) {
     $prefix = 'App\\';
