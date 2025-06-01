@@ -71,7 +71,7 @@ class AuthController extends Controller {
     public function logout() {
         // Limpa todas as variáveis de sessão
         $_SESSION = array();
-        // Se estiver usando cookies de sessão, remove o cookie
+        // Se estiver usando cookies de sessão, remove o cookie.
         if (ini_get('session.use_cookies')) {
             $params = session_get_cookie_params();
             setcookie(session_name(), '', time() - 42000,
